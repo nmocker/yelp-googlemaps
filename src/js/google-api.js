@@ -4,6 +4,7 @@ class GoogleApi {
     myMap = null;
     myInfoWindow = null;
     markers = [];
+    
 
     constructor() {
         console.log('GoogleApi()')
@@ -17,17 +18,30 @@ class GoogleApi {
         console.log('got a place search request', theEvent)
 
         const service = new google.maps.places.PlacesService(this.myMap);
-
-
+        
 
         const details = theEvent.detail
         const request = {
             query: details['query'],
-            bounds: this.myMap.getBounds()
-            // location: details['location'],
-            // radius: 10000
-
+            bounds: this.myMap.getBounds(),
+            location: details['location'],
+            radius: 10000,
         }
+
+        // for (let d in details) {
+        //     const business = details[d]
+        //     const businessCoordinates = {
+        //         lat: business.coordinates.latitude,
+        //         lng: business.coordinates.longitude,
+        //     }
+
+            
+            
+
+        // }
+       
+
+
         service.textSearch(request, (results, status) => {
             if (status == google.maps.places.PlacesServiceStatus.OK) {
                 console.log('got results', results)
@@ -35,16 +49,22 @@ class GoogleApi {
                 // clear any previous markers
                 this.clearMarkers()
 
+
                 const newEvent = new CustomEvent('place-results', {detail: results})
                 document.dispatchEvent(newEvent)
 
                 for (let place of results) {
                     let geo = place.geometry.location
                     let title = place.name
-                    let content = `<h2>${place.name}</h2>` + `<h2>${place.formatted_address}</h2>` + `<h2>${place.rating} ⭐</h2>`
+                    let content = `<h2>${place.name}</h2>` + `<h2>${place.formatted_address}</h2>` + `<h2>${place.rating} ⭐</h2>`  
+                    
+                   
 
 
+                    
                     this.addMarker(geo, { title: title, content: content})
+
+                    
                 }
             }
         })
@@ -75,23 +95,25 @@ class GoogleApi {
         this.addMarker(mbStadium, {title: "Mercedes-Benz Stadium", content: '<h2>Mercedes-Benz Stadium</h2>'})
     }
 
+
     // info will be an object with various bits of info
     addMarker(position, info) {
         const marker = new google.maps.Marker({
             map: this.myMap,
             position: position,
             title: info['title'],
-    
-
         }) 
 
-        this.markers.push(marker)
-      
-
+        const locationLatLng = new google.maps.LatLng(
+            marker.position.lat(),
+            marker.position.lng(),
+        )
         
         marker.addListener('click', () => {
             this.myInfoWindow.setContent(info['content'])
             this.myInfoWindow.open(this.myMap, marker)
         })
+        this.myMap.extend
+        // this.myMap.panToBounds(this.bounds)
     }
 }

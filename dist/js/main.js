@@ -41,7 +41,7 @@ var Main = /*#__PURE__*/function () {
         imgDiv.setAttribute('class', 'img-div');
         resultDiv.appendChild(imgDiv);
         var imgEl = document.createElement('img');
-        imgEl.setAttribute('src', resultInfo.icon);
+        imgEl.setAttribute('src', resultInfo.image_url);
         imgDiv.appendChild(imgEl);
         var nameEl = document.createElement('h2');
         nameDiv.appendChild(nameEl);
@@ -53,7 +53,10 @@ var Main = /*#__PURE__*/function () {
         var addressEl = document.createElement('span');
         dataDiv.appendChild(addressEl);
         addressEl.setAttribute('class', 'address-el');
-        addressEl.textContent = resultInfo.formatted_address;
+        addressEl.textContent = resultInfo.location.display_address;
+        var phoneEl = document.createElement('span');
+        dataDiv.appendChild(phoneEl);
+        phoneEl.textContent = resultInfo.display_phone;
       }
     });
 
@@ -73,22 +76,23 @@ var Main = /*#__PURE__*/function () {
     value: function handleSearch(theEvent) {
       theEvent.preventDefault();
       var query = document.querySelector('[name="query"]').value;
+      var location = document.querySelector('[name="location"]').value;
       console.log('searching for ', query);
       var yelpApi = new YelpApi();
 
-      if (query === '') {
+      if (query && location === '') {
         alert('Please enter a keyword');
       } else {
         yelpApi.businessSearch({
-          term: query
+          term: query,
+          location: location
         });
-      } // var yelpCustomEvent = new CustomEvent('yelp-search', {detail: {query: query}})
-      // document.dispatchEvent(yelpCustomEvent)
-
+      }
 
       var customEvent = new CustomEvent('place-search', {
         detail: {
-          query: query
+          query: query,
+          location: location
         }
       });
       document.dispatchEvent(customEvent);

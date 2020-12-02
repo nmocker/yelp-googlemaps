@@ -33,10 +33,17 @@ var GoogleApi = /*#__PURE__*/function () {
       var details = theEvent.detail;
       var request = {
         query: details['query'],
-        bounds: _this.myMap.getBounds() // location: details['location'],
-        // radius: 10000
+        bounds: _this.myMap.getBounds(),
+        location: details['location'],
+        radius: 10000
+      }; // for (let d in details) {
+      //     const business = details[d]
+      //     const businessCoordinates = {
+      //         lat: business.coordinates.latitude,
+      //         lng: business.coordinates.longitude,
+      //     }
+      // }
 
-      };
       service.textSearch(request, function (results, status) {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
           console.log('got results', results); // clear any previous markers
@@ -121,12 +128,13 @@ var GoogleApi = /*#__PURE__*/function () {
         position: position,
         title: info['title']
       });
-      this.markers.push(marker);
+      var locationLatLng = new google.maps.LatLng(marker.position.lat(), marker.position.lng());
       marker.addListener('click', function () {
         _this2.myInfoWindow.setContent(info['content']);
 
         _this2.myInfoWindow.open(_this2.myMap, marker);
       });
+      this.myMap.extend; // this.myMap.panToBounds(this.bounds)
     }
   }]);
 

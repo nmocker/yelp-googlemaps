@@ -16,22 +16,23 @@ class Main {
         theEvent.preventDefault()
     
         var query = document.querySelector('[name="query"]').value
+        var location = document.querySelector('[name="location"]').value
     
         console.log('searching for ', query)
+       
 
         const yelpApi = new YelpApi()
-        if (query === '') {
+        if (query && location === '') {
             alert('Please enter a keyword')
         } else {
             yelpApi.businessSearch({
-                term: query
+                term: query,
+                location: location,
             })
         }
 
-        // var yelpCustomEvent = new CustomEvent('yelp-search', {detail: {query: query}})
-        // document.dispatchEvent(yelpCustomEvent)
     
-        var customEvent = new CustomEvent('place-search', {detail : {query: query}})
+        var customEvent = new CustomEvent('place-search', {detail : {query: query, location: location}})
         document.dispatchEvent(customEvent)
     }
 
@@ -40,9 +41,11 @@ class Main {
         const results = theEvent.detail
         const resultsUl = document.querySelector('.results-grid')
         resultsUl.textContent = ''
+    
 
         for (let r in results) {
             const resultInfo = results[r]
+           
 
             const resultEl = document.createElement('li')
             resultsUl.appendChild(resultEl)
@@ -72,7 +75,7 @@ class Main {
             resultDiv.appendChild(imgDiv)
 
             const imgEl = document.createElement('img')
-            imgEl.setAttribute('src', resultInfo.icon)
+            imgEl.setAttribute('src', resultInfo.image_url)
             imgDiv.appendChild(imgEl)
 
             const nameEl = document.createElement('h2')
@@ -87,9 +90,11 @@ class Main {
             const addressEl = document.createElement('span')
             dataDiv.appendChild(addressEl)
             addressEl.setAttribute('class', 'address-el')
-            addressEl.textContent = resultInfo.formatted_address
+            addressEl.textContent = resultInfo.location.display_address
 
-
+            const phoneEl = document.createElement('span');
+			dataDiv.appendChild(phoneEl);
+			phoneEl.textContent = resultInfo.display_phone;
 
         }
 
